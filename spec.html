@@ -7676,7 +7676,7 @@
 
     <emu-clause id="sec-enqueuepromisejob" aoid="EnqueuePromiseJob">
       <h1>EnqueuePromiseJob ( _job_, _arguments_ )</h1>
-      <p>The EnqueuePromiseJob abstract operation requires two arguments: _job_ and _arguments_. It performs the following steps:</p>
+      <p>The EnqueuePromiseJob abstract operation performs the following steps:</p>
       <emu-alg>
         1. Assert: _job_ is the name of a Job.
         1. Assert: _arguments_ is a List that has the same number of elements as the number of parameters required by _job_.
@@ -7684,8 +7684,7 @@
         1. Let _callerRealm_ be _callerContext_'s Realm.
         1. Let _callerScriptOrModule_ be _callerContext_'s ScriptOrModule.
         1. Let _pending_ be PendingJob { [[Job]]: _job_, [[Arguments]]: _arguments_, [[Realm]]: _callerRealm_, [[ScriptOrModule]]: _callerScriptOrModule_, [[HostDefined]]: *undefined* }.
-        1. Let _result_ be the result of performing HostEnqueuePromiseJob using &laquo; _pending_ &raquo; as its arguments.
-        1. Assert: _result_ is a normal completion.
+        1. Let _result_ be ! HostEnqueuePromiseJob(_pending_).
         1. Return NormalCompletion(~empty~).
       </emu-alg>
     </emu-clause>
