@@ -7649,7 +7649,7 @@
         </tbody>
       </table>
     </emu-table>
-    <p>Jobs are scheduled for execution by ECMAScript host environments. Such operations accept a PendingJob Record _pending_ as a parameter. These abstract operations schedule the PendingJob to be performed at some future time. Their implementations must conform to the following requirements:</p>
+    <p>Jobs are scheduled for execution by ECMAScript host environments with abstract operations. The ECMAScript specification describes the host hook HostEnqueuePromiseJob to schedule one job; host environments may define additional abstract operations which schedule jobs. Such operations accept a PendingJob Record _pending_ as a parameter. These abstract operations schedule the PendingJob to be performed at some future time. Their implementations must conform to the following requirements:</p>
 
     <ul>
       <li>At some future point in time, when there is no running execution context and the execution context stack is empty, the implementation must:
