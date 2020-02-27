@@ -3911,7 +3911,7 @@
 
   <emu-clause id="sec-ecmascript-specification-types">
     <h1>ECMAScript Specification Types</h1>
-    <p>A specification type corresponds to meta-values that are used within algorithms to describe the semantics of ECMAScript language constructs and ECMAScript language types. The specification types include Reference, List, Completion, Property Descriptor, Lexical Environment, Environment Record, and Data Block. Specification type values are specification artefacts that do not necessarily correspond to any specific entity within an ECMAScript implementation. Specification type values may be used to describe intermediate results of ECMAScript expression evaluation but such values cannot be stored as properties of objects or values of ECMAScript language variables.</p>
+    <p>A specification type corresponds to meta-values that are used within algorithms to describe the semantics of ECMAScript language constructs and ECMAScript language types. The specification types include Reference, List, Completion, Property Descriptor, Lexical Environment, Environment Record, Abstract Closure, and Data Block. Specification type values are specification artefacts that do not necessarily correspond to any specific entity within an ECMAScript implementation. Specification type values may be used to describe intermediate results of ECMAScript expression evaluation but such values cannot be stored as properties of objects or values of ECMAScript language variables.</p>
 
     <emu-clause id="sec-list-and-record-specification-type">
       <h1>The List and Record Specification Types</h1>
@@ -4391,6 +4391,34 @@
     <emu-clause id="sec-lexical-environment-and-environment-record-specification-types">
       <h1>The Lexical Environment and Environment Record Specification Types</h1>
       <p>The Lexical Environment and Environment Record types are used to explain the behaviour of name resolution in nested functions and blocks. These types and the operations upon them are defined in <emu-xref href="#sec-lexical-environments"></emu-xref>.</p>
+    </emu-clause>
+
+    <emu-clause id="sec-abstract-closure">
+      <h1>The Abstract Closure Specification Type</h1>
+      <p>The <dfn>Abstract Closure</dfn> specification type is used to refer to algorithmic steps together with a Record of values. Abstract Closure meta-values may be passed around and are invoked using function application style such as _closure_(_arg1_, _arg2_). Like Abstract Operations, invocations perform the algorithmic steps described by the Abstract Closure.</p>
+      <p>Abstract Closures are not directly called by name but must first be created. For notational convenience, Abstract Closures are specified with two parameter lists. The first parameter list is for creating an Abstract Closure. The second parameter list is for calling the created Abstract Closure meta-value.</p>
+      <p>In algorithmic steps describing creating an Abstract Closure, the Record of captured values is captured with the verb "capture". In algorithmic steps describing calling an Abstract Closure, the captured Record is retrieved by referring to the "captured Record".</p>
+      <p>For example, the following creates an Abstract Closure that always returns the captured input.</p>
+
+      <emu-clause id="sec-exampleconstant" aoid="ExampleConstant">
+        <h1>ExampleConstant ( _value_ ) ( )</h1>
+        <p>Creating an ExampleConstant abstract closure takes an argument _value_ and perform the following steps:</p>
+        <emu-alg>
+          1. Capture { [[Value]]: _value_ }.
+        </emu-alg>
+        <p>Calling an ExampleConstant abstract closure takes no arguments and perform the following steps:</p>
+        <emu-alg>
+          1. Let _captured_ be this Abstract Closure's captured Record.
+          1. Return _captured_.[[Value]].
+        </emu-alg>
+      </emu-clause>
+
+      <p>Continuing the example, the ExampleConstant may be used as follows.</p>
+      <emu-alg>
+        1. Let _closure_ be a new Abstract Closure ExampleConstant(*42*).
+        1. Let _val_ be _closure_().
+        1. Assert: _val_ is *42*.
+      </emu-alg>
     </emu-clause>
 
     <emu-clause id="sec-data-blocks">
