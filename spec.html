@@ -4395,27 +4395,27 @@
 
     <emu-clause id="sec-abstract-closure">
       <h1>The Abstract Closure Specification Type</h1>
-      <p>The <dfn>Abstract Closure</dfn> specification type is used to refer to algorithmic steps together with a Record of values. Abstract Closure meta-values may be passed around and are invoked using function application style such as _closure_(_arg1_, _arg2_). Like Abstract Operations, invocations perform the algorithmic steps described by the Abstract Closure.</p>
-      <p>Abstract Closures are not directly called by name but must first be created. For notational convenience, Abstract Closures are specified with two parameter lists. The first parameter list is for creating an Abstract Closure. The second parameter list is for calling the created Abstract Closure meta-value.</p>
-      <p>In algorithmic steps describing creating an Abstract Closure, the Record of captured values is captured with the verb "capture". In algorithmic steps describing calling an Abstract Closure, the captured Record is retrieved by referring to the "captured Record".</p>
-      <p>For example, the following creates an Abstract Closure that always returns the captured input.</p>
+      <p>The <dfn>abstract closure</dfn> specification type is used to refer to algorithmic steps together with a Record of values. Abstract closure meta-values may be passed around and are invoked using function application style such as _closure_(_arg1_, _arg2_). Like abstract operations, invocations perform the algorithmic steps described by the abstract closure.</p>
+      <p>Abstract closures are not directly called by name but must first be created. For notational convenience, abstract closures are specified with two parameter lists. The first parameter list is for creating an abstract closure. The second parameter list is for calling the created abstract closure meta-value.</p>
+      <p>In algorithmic steps describing creating an abstract closure, the Record of captured values is captured with the verb "capture". In algorithmic steps describing calling an abstract closure, the captured Record is retrieved by referring to the "captured Record".</p>
+      <p>For example, the following creates an abstract closure that always returns the captured input.</p>
 
       <emu-clause id="sec-exampleconstant" aoid="ExampleConstant">
         <h1>ExampleConstant ( _value_ ) ( )</h1>
-        <p>Creating an ExampleConstant abstract closure takes an argument _value_ and perform the following steps:</p>
+        <p>Creating an ExampleConstant abstract closure takes an argument _value_ and performs the following steps:</p>
         <emu-alg>
           1. Capture { [[Value]]: _value_ }.
         </emu-alg>
-        <p>Calling an ExampleConstant abstract closure takes no arguments and perform the following steps:</p>
+        <p>Calling an ExampleConstant abstract closure takes no arguments and performs the following steps:</p>
         <emu-alg>
-          1. Let _captured_ be this Abstract Closure's captured Record.
+          1. Let _captured_ be this abstract closure's captured Record.
           1. Return _captured_.[[Value]].
         </emu-alg>
       </emu-clause>
 
       <p>Continuing the example, the ExampleConstant may be used as follows.</p>
       <emu-alg>
-        1. Let _closure_ be a new Abstract Closure ExampleConstant(*42*).
+        1. Let _closure_ be a new abstract closure ExampleConstant(*42*).
         1. Let _val_ be _closure_().
         1. Assert: _val_ is *42*.
       </emu-alg>
@@ -7603,7 +7603,7 @@
 
   <emu-clause id="sec-jobs-and-job-queues">
     <h1>Jobs and Host Operations to Enqueue Jobs</h1>
-    <p>A <dfn id="job">Job</dfn> is an abstract operation that initiates an ECMAScript computation when no other ECMAScript computation is currently in progress. A Job abstract operation may be defined to accept an arbitrary set of job parameters.</p>
+    <p>A <dfn id="job">Job</dfn> is an abstract closure that initiates an ECMAScript computation when no other ECMAScript computation is currently in progress. A Job abstract closure takes no arguments.</p>
     <p>Execution of a Job can be initiated only when there is no running execution context and the execution context stack is empty. A PendingJob is a request for the future execution of a Job. A PendingJob is an internal Record whose fields are specified in <emu-xref href="#table-25"></emu-xref>. Once execution of a Job is initiated, the Job always executes to completion. No other Job may be initiated until the currently running Job completes. However, the currently running Job or external events may cause the enqueuing of additional PendingJobs that may be initiated sometime after completion of the currently running Job.</p>
     <emu-table id="table-25" caption="PendingJob Record Fields">
       <table>
@@ -7624,21 +7624,10 @@
             [[Job]]
           </td>
           <td>
-            The name of a Job abstract operation
+            An abstract closure
           </td>
           <td>
             This is the abstract operation that is performed when execution of this PendingJob is initiated.
-          </td>
-        </tr>
-        <tr>
-          <td>
-            [[Arguments]]
-          </td>
-          <td>
-            A List
-          </td>
-          <td>
-            The List of argument values that are to be passed to [[Job]] when it is activated.
           </td>
         </tr>
         <tr>
@@ -7703,18 +7692,15 @@
     </emu-clause>
 
     <emu-clause id="sec-enqueuejob" aoid="EnqueueJob">
-      <h1>EnqueueJob ( _hostHook_, _job_, _arguments_ )</h1>
-      <p>The EnqueueJob abstract operation requires three arguments: _hostHook_, _job_, and _arguments_. It performs the following steps:</p>
+      <h1>EnqueueJob ( _jobKind_, _job_ )</h1>
+      <p>The abstract operation EnqueueJob performs the following steps.</p>
       <emu-alg>
-        1. Assert: _hostHook_ is an abstract operation_.
-        1. Assert: _job_ is the name of a Job.
-        1. Assert: _arguments_ is a List that has the same number of elements as the number of parameters required by _job_.
+        1. Assert: _job_ is an abstract closure.
         1. Let _callerContext_ be the running execution context.
         1. Let _callerRealm_ be _callerContext_'s Realm.
         1. Let _callerScriptOrModule_ be _callerContext_'s ScriptOrModule.
-        1. Let _pending_ be PendingJob { [[Job]]: _job_, [[Arguments]]: _arguments_, [[Realm]]: _callerRealm_, [[ScriptOrModule]]: _callerScriptOrModule_, [[HostDefined]]: *undefined* }.
-        1. Let _result_ be the result of performing the abstract operation named by _hostHook_ using &laquo; _pending_ &raquo; as its arguments.
-        1. Assert: _result_ is a normal completion.
+        1. Let _pending_ be PendingJob { [[Job]]: _job_, [[Realm]]: _callerRealm_, [[ScriptOrModule]]: _callerScriptOrModule_, [[HostDefined]]: *undefined* }.
+        1. If _jobKind_ is ~promise~, then perform ! HostEnqueuePromiseJob(_pending_).
         1. Return NormalCompletion(~empty~).
       </emu-alg>
     </emu-clause>
@@ -39797,7 +39783,8 @@ THH:mm:ss.sss
             1. Let _thenAction_ be _then_.[[Value]].
             1. If IsCallable(_thenAction_) is *false*, then
               1. Return FulfillPromise(_promise_, _resolution_).
-            1. Perform EnqueueJob(HostEnqueuePromiseJob, PromiseResolveThenableJob, &laquo; _promise_, _resolution_, _thenAction_ &raquo;).
+            1. Let _job_ be a new abstract closure PromiseResolveThenableJob(_promise_, _resolution_, _thenAction_).
+            1. Perform EnqueueJob(~promise~, _job_).
             1. Return *undefined*.
           </emu-alg>
           <p>The *"length"* property of a promise resolve function is 1.</p>
@@ -39886,7 +39873,8 @@ THH:mm:ss.sss
         <p>The abstract operation TriggerPromiseReactions takes a collection of PromiseReactionRecords and enqueues a new Job for each record. Each such Job processes the [[Type]] and [[Handler]] of the PromiseReactionRecord, and if the [[Handler]] is a function, calls it passing the given argument. If the [[Handler]] is *undefined*, the behaviour is determined by the [[Type]].</p>
         <emu-alg>
           1. For each _reaction_ in _reactions_, in original insertion order, do
-            1. Perform EnqueueJob(HostEnqueuePromiseJob, PromiseReactionJob, &laquo; _reaction_, _argument_ &raquo;).
+            1. Let _job_ be a new abstract closure PromiseReactionJob(_reaction_, _argument_).
+            1. Perform EnqueueJob(~promise~, _job_).
           1. Return *undefined*.
         </emu-alg>
       </emu-clause>
@@ -39919,10 +39907,18 @@ THH:mm:ss.sss
       <h1>Promise Jobs</h1>
 
       <emu-clause id="sec-promisereactionjob" aoid="PromiseReactionJob">
-        <h1>PromiseReactionJob ( _reaction_, _argument_ )</h1>
-        <p>The job PromiseReactionJob with parameters _reaction_ and _argument_ applies the appropriate handler to the incoming value, and uses the handler's return value to resolve or reject the derived promise associated with that handler.</p>
+        <h1>PromiseReactionJob ( _reaction_, _argument_ ) ( )</h1>
+        <p>The job PromiseReactionJob applies the appropriate handler to the incoming value, and uses the handler's return value to resolve or reject the derived promise associated with that handler.</p>
+        <p>Creating a PromiseReactionJob abstract closure with parameters _reaction_ and _argument_  performs the following steps:</p>
         <emu-alg>
           1. Assert: _reaction_ is a PromiseReaction Record.
+          1. Capture { [[Reaction]]: _reaction_, [[Argument]]: _argument_ }.
+        </emu-alg>
+        <p>Calling a PromiseReactionJob abstract closure takes no arguments and performs the following steps:</p>
+        <emu-alg>
+          1. Let _captured_ be this abstract closure's captured Record.
+          1. Let _reaction_ be _captured_.[[Reaction]].
+          1. Let _argument_ be _captured_.[[Argument]].
           1. Let _promiseCapability_ be _reaction_.[[Capability]].
           1. Let _type_ be _reaction_.[[Type]].
           1. Let _handler_ be _reaction_.[[Handler]].
@@ -39944,11 +39940,15 @@ THH:mm:ss.sss
       </emu-clause>
 
       <emu-clause id="sec-promiseresolvethenablejob" aoid="PromiseResolveThenableJob">
-        <h1>PromiseResolveThenableJob ( _promiseToResolve_, _thenable_, _then_ )</h1>
-        <p>The job PromiseResolveThenableJob with parameters _promiseToResolve_, _thenable_, and _then_ performs the following steps:</p>
+        <h1>PromiseResolveThenableJob ( _promiseToResolve_, _thenable_, _then_ ) ( )</h1>
+        <p>Creating a PromiseResolveThenableJob abstract closure with parameters _promiseToResolve_, _thenable_, and _then_ performs the following steps:</p>
         <emu-alg>
-          1. Let _resolvingFunctions_ be CreateResolvingFunctions(_promiseToResolve_).
-          1. Let _thenCallResult_ be Call(_then_, _thenable_, &laquo; _resolvingFunctions_.[[Resolve]], _resolvingFunctions_.[[Reject]] &raquo;).
+          1. Capture { [[PromiseToResolve]]: _promiseToResolve_, [[Thenable]]: _thenable_, [[Then]]: _then_ }.
+        </emu-alg>
+        <emu-alg>
+          1. Let _captured_ be this abstract closure's captured Record.
+          1. Let _resolvingFunctions_ be CreateResolvingFunctions(_captured_.[[PromiseToResolve]]).
+          1. Let _thenCallResult_ be Call(_captured_.[[Then]], _captured_.[[Thenable]], &laquo; _resolvingFunctions_.[[Resolve]], _resolvingFunctions_.[[Reject]] &raquo;).
           1. If _thenCallResult_ is an abrupt completion, then
             1. Let _status_ be Call(_resolvingFunctions_.[[Reject]], *undefined*, &laquo; _thenCallResult_.[[Value]] &raquo;).
             1. Return Completion(_status_).
@@ -40430,12 +40430,14 @@ THH:mm:ss.sss
               1. Append _rejectReaction_ as the last element of the List that is _promise_.[[PromiseRejectReactions]].
             1. Else if _promise_.[[PromiseState]] is ~fulfilled~, then
               1. Let _value_ be _promise_.[[PromiseResult]].
-              1. Perform EnqueueJob(HostEnqueuePromiseJob, PromiseReactionJob, &laquo; _fulfillReaction_, _value_ &raquo;).
+              1. Let _job_ be a new abstract closure PromiseReactionJob(_fulfillReaction_, _value_).
+              1. Perform EnqueueJob(~promise~, _job_).
             1. Else,
               1. Assert: The value of _promise_.[[PromiseState]] is ~rejected~.
               1. Let _reason_ be _promise_.[[PromiseResult]].
               1. If _promise_.[[PromiseIsHandled]] is *false*, perform HostPromiseRejectionTracker(_promise_, *"handle"*).
-              1. Perform EnqueueJob(HostEnqueuePromiseJob, PromiseReactionJob, &laquo; _rejectReaction_, _reason_ &raquo;).
+              1. Let _job_ be a new abstract closure PromiseReactionJob(_rejectReaction_, _reason_).
+              1. Perform EnqueueJob(~promise~, _job_).
             1. Set _promise_.[[PromiseIsHandled]] to *true*.
             1. If _resultCapability_ is *undefined*, then
               1. Return *undefined*.
