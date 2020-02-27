@@ -7673,7 +7673,7 @@
         <ol>
           <li>Push an execution context onto the execution context stack.</li>
           <li>Perform any implementation-defined preparation steps.</li>
-          <li>Perform the abstract operation given by _pending_.[[Job]], passing the arguments _pending_.[[Arguments]].</li>
+          <li>Call the abstract closure in _pending_.[[Job]].</li>
           <li>Perform any implementation-defined cleanup steps.</li>
           <li>Pop the previously-pushed execution context from the execution context stack.</li>
         </ol>
@@ -39945,6 +39945,7 @@ THH:mm:ss.sss
         <emu-alg>
           1. Capture { [[PromiseToResolve]]: _promiseToResolve_, [[Thenable]]: _thenable_, [[Then]]: _then_ }.
         </emu-alg>
+        <p>Calling a PromiseResolveThenableJob abstract closure takes no arguments and performs the following steps:</p>
         <emu-alg>
           1. Let _captured_ be this abstract closure's captured Record.
           1. Let _resolvingFunctions_ be CreateResolvingFunctions(_captured_.[[PromiseToResolve]]).
