@@ -28503,6 +28503,22 @@ THH:mm:ss.sss
         1. Throw a *TypeError* exception.
       </emu-alg>
 
+      <emu-clause id="sec-string.prototype.at">
+        <h1>String.prototype.at ( _index_ )</h1>
+        <emu-alg>
+          1. Let _O_ be ? RequireObjectCoercible(*this* value).
+          1. Let _S_ be ? ToString(_O_).
+          1. Let _len_ be the length of _S_.
+          1. Let _relativeIndex_ be ? ToInteger(_index_).
+          1. If _relativeIndex_ &ge; 0, then
+            1. Let _k_ be _relativeIndex_.
+          1. Else,
+            1. Let _k_ be _len_ + _relativeIndex_.
+          1. If _k_ &lt; 0 or _k_ &ge; _len_, then return *undefined*.
+          1. Return the String value consisting of only the code unit at position _k_ in _S_.
+        </emu-alg>
+      </emu-clause>
+
       <emu-clause id="sec-string.prototype.charat">
         <h1>String.prototype.charAt ( _pos_ )</h1>
         <emu-note>
@@ -31728,6 +31744,21 @@ THH:mm:ss.sss
         <p>The Array prototype object is specified to be an Array exotic object to ensure compatibility with ECMAScript code that was created prior to the ECMAScript 2015 specification.</p>
       </emu-note>
 
+      <emu-clause id="sec-array.prototype.at">
+        <h1>Array.prototype.at ( _index_ )</h1>
+        <emu-alg>
+          1. Let _O_ be ? ToObject(*this* value).
+          1. Let _len_ be ? LengthOfArrayLike(_O_).
+          1. Let _relativeIndex_ be ? ToInteger(_index_).
+          1. If _relativeIndex_ &ge; 0, then
+            1. Let _k_ be _relativeIndex_.
+          1. Else,
+            1. Let _k_ be _len_ + _relativeIndex_.
+          1. If _k_ &lt; 0 or _k_ &ge; _len_, then return *undefined*.
+          1. Return ? Get(_O_, ! ToString(𝔽(_k_))).
+        </emu-alg>
+      </emu-clause>
+
       <emu-clause id="sec-array.prototype.concat">
         <h1>Array.prototype.concat ( ..._items_ )</h1>
         <p>When the `concat` method is called with zero or more arguments, it returns an array containing the array elements of the object followed by the array elements of each argument.</p>
@@ -32844,6 +32875,7 @@ THH:mm:ss.sss
         <p>The initial value of the @@unscopables data property is an object created by the following steps:</p>
         <emu-alg>
           1. Let _unscopableList_ be ! OrdinaryObjectCreate(*null*).
+          1. Perform ! CreateDataPropertyOrThrow(_unscopableList_, *"at"*, *true*).
           1. Perform ! CreateDataPropertyOrThrow(_unscopableList_, *"copyWithin"*, *true*).
           1. Perform ! CreateDataPropertyOrThrow(_unscopableList_, *"entries"*, *true*).
           1. Perform ! CreateDataPropertyOrThrow(_unscopableList_, *"fill"*, *true*).
@@ -33328,6 +33360,22 @@ THH:mm:ss.sss
           1. If IsDetachedBuffer(_buffer_) is *true*, return *+0*<sub>𝔽</sub>.
           1. Let _offset_ be _O_.[[ByteOffset]].
           1. Return 𝔽(_offset_).
+        </emu-alg>
+      </emu-clause>
+
+      <emu-clause id="sec-%typedarray%.prototype.at">
+        <h1>%TypedArray%.prototype.at ( _index_ )</h1>
+        <emu-alg>
+          1. Let _O_ be the *this* value.
+          1. Perform ? ValidateTypedArray(_O_).
+          1. Let _len_ be _O_.[[ArrayLength]].
+          1. Let _relativeIndex_ be ? ToInteger(_index_).
+          1. If _relativeIndex_ &ge; 0, then
+            1. Let _k_ be _relativeIndex_.
+          1. Else,
+            1. Let _k_ be _len_ + _relativeIndex_.
+          1. If _k_ &lt; 0 or _k_ &ge; _len_, then return *undefined*.
+          1. Return ? Get(_O_, ! ToString(𝔽(_k_))).
         </emu-alg>
       </emu-clause>
 
