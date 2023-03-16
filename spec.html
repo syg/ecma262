@@ -12305,7 +12305,7 @@
     </h1>
     <dl class="header">
       <dt>description</dt>
-      <dd>It returns *true* if and only if _v_ is considered to have an identity suitable for a weak reference. This determines whether _v_ can be a key of a WeakMap, or entry in a WeakSet, or target of a WeakRef or FinalizationRegistry.</dd>
+      <dd>It returns *true* if and only if _v_ is suitable for use as a weak reference. Only values that are suitable for use as a weak reference may be a key of a WeakMap, an element of a WeakSet, the target of a WeakRef, or one of the targets of a FinalizationRegistry.</dd>
     </dl>
     <emu-alg>
       1. If _v_ is an Object, return *true*.
@@ -12313,7 +12313,7 @@
       1. Return *false*.
     </emu-alg>
     <emu-note>
-      <p>Symbols in the GlobalSymbolRegistry (<emu-xref href="#sec-symbol.for"></emu-xref>) are not considered suitable for use as a WeakMap key because they can be described by the String used to register them, and therefore do not have <emu-xref href="#sec-identity">identity</emu-xref>. Well-known symbols (<emu-xref href="#sec-well-known-symbols"></emu-xref>) are likely to never be collected, but are nonetheless treated as suitable for weak reference because they are limited in number and therefore manageable by a variety of implementation approaches. However, any values associated to a well-known symbol in a live WeakMap is unlikely to be collected and could “leak” memory resources in many implementations.</p>
+      <p>Symbols produced by <emu-xref href="#sec-symbol.for">Symbol.for</emu-xref> are not considered suitable for use as a WeakMap key because they can be manifested without prior reference by their String description and do not have <emu-xref href="#sec-identity">identity</emu-xref> from the perspective of the ECMAScript language. Well-known symbols (<emu-xref href="#sec-well-known-symbols"></emu-xref>) are likely to never be collected, but are nonetheless treated as suitable for weak reference because they are limited in number and therefore manageable by a variety of implementation approaches. However, any values associated to a well-known symbol in a live WeakMap is unlikely to be collected and could “leak” memory resources in many implementations.</p>
     </emu-note>
   </emu-clause>
 </emu-clause>
@@ -30282,7 +30282,7 @@
           1. Append the Record { [[Key]]: _stringKey_, [[Symbol]]: _newSymbol_ } to the GlobalSymbolRegistry List.
           1. Return _newSymbol_.
         </emu-alg>
-        <p>The GlobalSymbolRegistry is a List that is globally available. It is shared by all realms. Prior to the evaluation of any ECMAScript code, it is initialized as a new empty List. Elements of the GlobalSymbolRegistry are Records with the structure defined in <emu-xref href="#table-globalsymbolregistry-record-fields"></emu-xref>.</p>
+        <p>The GlobalSymbolRegistry is an append-only List that is globally available. It is shared by all realms. Prior to the evaluation of any ECMAScript code, it is initialized as a new empty List. Elements of the GlobalSymbolRegistry are Records with the structure defined in <emu-xref href="#table-globalsymbolregistry-record-fields"></emu-xref>.</p>
         <emu-table id="table-globalsymbolregistry-record-fields" caption="GlobalSymbolRegistry Record Fields" oldids="table-44">
           <table>
             <tr>
