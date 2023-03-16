@@ -12313,7 +12313,7 @@
       1. Return *false*.
     </emu-alg>
     <emu-note>
-      <p>Symbols produced by <emu-xref href="#sec-symbol.for">Symbol.for</emu-xref> are not considered suitable for use as a WeakMap key because they can be manifested without prior reference by their String description and do not have <emu-xref href="#sec-identity">identity</emu-xref> from the perspective of the ECMAScript language. Well-known symbols (<emu-xref href="#sec-well-known-symbols"></emu-xref>) are likely to never be collected, but are nonetheless treated as suitable for weak reference because they are limited in number and therefore manageable by a variety of implementation approaches. However, any values associated to a well-known symbol in a live WeakMap is unlikely to be collected and could “leak” memory resources in many implementations.</p>
+      <p>Language values without <emu-xref href="#sec-identity">language identity</emu-xref> can be manifested without prior reference and are unsuitable for use as weak references. Symbols produced by <emu-xref href="#sec-symbol.for">Symbol.for</emu-xref>, unlike other Symbol values, do not have language identity and are unsuitable. Well-known symbols (<emu-xref href="#sec-well-known-symbols"></emu-xref>) are likely to never be collected, but are nonetheless treated as suitable for weak reference because they are limited in number and therefore manageable by a variety of implementation approaches. However, any values associated to a well-known symbol in a live WeakMap is unlikely to be collected and could “leak” memory resources in many implementations.</p>
     </emu-note>
   </emu-clause>
 </emu-clause>
