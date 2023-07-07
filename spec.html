@@ -40385,8 +40385,8 @@ THH:mm:ss.sss
             1. Set _len_ to IntegerIndexedObjectLength(_iieoRecord_).
             1. If _len_ is ~out-of-bounds~, throw a *TypeError* exception.
             1. Let _elementSize_ be TypedArrayElementSize(_O_).
-            1. Let _bufferByteLen_ be _len_ × _elementSize_.
             1. Let _byteOffset_ be _O_.[[ByteOffset]].
+            1. Let _bufferByteLimit_ be _len_ × _elementSize_ + _byteOffset_.
             1. Let _toByteIndex_ be _to_ × _elementSize_ + _byteOffset_.
             1. Let _fromByteIndex_ be _from_ × _elementSize_ + _byteOffset_.
             1. Let _countBytes_ be _count_ × _elementSize_.
@@ -40397,7 +40397,7 @@ THH:mm:ss.sss
             1. Else,
               1. Let _direction_ be 1.
             1. Repeat, while _countBytes_ > 0,
-              1. If _fromByteIndex_ &lt; _bufferByteLen_ and _toByteIndex_ &lt; _bufferByteLen_, then
+              1. If _fromByteIndex_ &lt; _bufferByteLimit_ and _toByteIndex_ &lt; _bufferByteLimit_, then
                 1. Let _value_ be GetValueFromBuffer(_buffer_, _fromByteIndex_, ~Uint8~, *true*, ~Unordered~).
                 1. Perform SetValueInBuffer(_buffer_, _toByteIndex_, ~Uint8~, _value_, *true*, ~Unordered~).
                 1. Set _fromByteIndex_ to _fromByteIndex_ + _direction_.
@@ -43337,6 +43337,7 @@ THH:mm:ss.sss
         </emu-alg>
         <emu-note>
           <p>Spurious failures of the compare-exchange to update the length are prohibited. If the bounds checking for the new length passes and the implementation is not out of memory, a ReadModifyWriteSharedMemory event (i.e. a successful compare-exchange) is always added into the candidate execution.</p>
+          <p>Parallel calls to SharedArrayBuffer.prototype.grow are totally ordered. For example, consider two racing calls: `sab.grow(10)` and `sab.grow(20)`. One of the two calls is guaranteed to win the race. The call to `sab.grow(10)` will never shrink `sab` even if `sab.grow(20)` happened first.</p>
         </emu-note>
       </emu-clause>
 
