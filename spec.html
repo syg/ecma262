@@ -14656,7 +14656,7 @@
                 [[CachedBufferByteLength]]
               </td>
               <td>
-                a non-negative integer
+                a non-negative integer or ~detached~
               </td>
               <td>
                 The byte length of the object's [[ViewedArrayBuffer]] when the Record was created.
@@ -14676,7 +14676,11 @@
         <dl class="header">
         </dl>
         <emu-alg>
-          1. Let _byteLength_ be ArrayBufferByteLength(_obj_.[[ViewedArrayBuffer]], _order_).
+          1. Let _buffer_ be _obj_.[[ViewedArrayBuffer]].
+          1. If IsDetachedBuffer(_buffer_) is *true*, then
+            1. Let _byteLength_ be ~detached~.
+          1. Else,
+            1. Let _byteLength_ be ArrayBufferByteLength(_buffer_, _order_).
           1. Return the Integer-Indexed Object With Buffer Witness Record { [[Object]]: _obj_, [[CachedBufferByteLength]]: _byteLength_ }.
         </emu-alg>
       </emu-clause>
@@ -14739,7 +14743,9 @@
           1. Assert: IsFixedLengthArrayBuffer(_O_.[[ViewedArrayBuffer]]) is *false*.
           1. Let _byteOffset_ be _O_.[[ByteOffset]].
           1. Let _elementSize_ be TypedArrayElementSize(_O_).
-          1. Return floor((_iieoRecord_.[[CachedBufferByteLength]] - _byteOffset_) / _elementSize_).
+          1. Let _byteLength_ be _iieoRecord_.[[CachedBufferByteLength]]
+          1. Assert: _byteLength_ is not ~detached~.
+          1. Return floor((_byteLength_ - _byteOffset_) / _elementSize_).
         </emu-alg>
       </emu-clause>
 
@@ -14755,8 +14761,10 @@
         </dl>
         <emu-alg>
           1. Let _O_ be _iieoRecord_.[[Object]].
-          1. If IsDetachedBuffer(_O_.[[ViewedArrayBuffer]]) is *true*, return *true*.
           1. Let _bufferByteLength_ be _iieoRecord_.[[CachedBufferByteLength]].
+          1. Let _buffer_ be _O_.[[ViewedArrayBuffer]].
+          1. Assert: IsDetachedBuffer(buffer_) is *true* if and only if _bufferByteLength_ is ~detached~.
+          1. If _bufferByteLength_ is ~detached~, then return *true*.
           1. Let _byteOffsetStart_ be _O_.[[ByteOffset]].
           1. If _O_.[[ArrayLength]] is ~auto~, then
             1. Let _byteOffsetEnd_ be _bufferByteLength_.
@@ -43445,7 +43453,7 @@ THH:mm:ss.sss
                 [[CachedBufferByteLength]]
               </td>
               <td>
-                a non-negative integer
+                a non-negative integer or ~detached~
               </td>
               <td>
                 The byte length of the object's [[ViewedArrayBuffer]] when the Record was created.
@@ -43465,7 +43473,11 @@ THH:mm:ss.sss
         <dl class="header">
         </dl>
         <emu-alg>
-          1. Let _byteLength_ be ArrayBufferByteLength(_obj_.[[ViewedArrayBuffer]], _order_).
+          1. Let _buffer_ be _obj_.[[ViewedArrayBuffer]].
+          1. If IsDetachedBuffer(_buffer_) is *true*, then
+            1. Let _byteLength_ be ~detached~.
+          1. Else,
+            1. Let _byteLength_ be ArrayBufferByteLength(_buffer_, _order_).
           1. Return the DataView With Buffer Witness Record { [[Object]]: _obj_, [[CachedBufferByteLength]]: _byteLength_ }.
         </emu-alg>
       </emu-clause>
@@ -43484,7 +43496,9 @@ THH:mm:ss.sss
           1. If _view_.[[ByteLength]] is not ~auto~, return _view_.[[ByteLength]].
           1. Assert: IsFixedLengthArrayBuffer(_view_.[[ViewedArrayBuffer]]) is *false*.
           1. Let _byteOffset_ be _view_.[[ByteOffset]].
-          1. Return _viewRecord_.[[CachedBufferByteLength]] - _byteOffset_.
+          1. Let _byteLength_ be _viewRecord_.[[CachedBufferByteLength]].
+          1. Assert: _byteLength_ is not ~detached~.
+          1. Return _byteLength_ - _byteOffset_.
         </emu-alg>
       </emu-clause>
 
@@ -43498,9 +43512,10 @@ THH:mm:ss.sss
         </dl>
         <emu-alg>
           1. Let _view_ be _viewRecord_.[[Object]].
-          1. Let _buffer_ be _view_.[[ViewedArrayBuffer]].
-          1. If IsDetachedBuffer(_buffer_) is *true*, return *true*.
           1. Let _bufferByteLength_ be _viewRecord.[[CachedBufferByteLength]].
+          1. Let _buffer_ be _view_.[[ViewedArrayBuffer]].
+          1. Assert: IsDetachedBuffer(_buffer_) is *true* if and only if _buffer_ is ~detached~.
+          1. If _buffer_ is ~detached~, then return *true*.
           1. Let _byteOffsetStart_ be _view_.[[ByteOffset]].
           1. If _view_.[[ByteLength]] is ~auto~, then
             1. Let _byteOffsetEnd_ be _bufferByteLength_.
@@ -44078,12 +44093,14 @@ THH:mm:ss.sss
           ValidateAtomicAccessOnIntegerTypedArray (
             _typedArray_: an ECMAScript language value,
             _requestIndex_: an ECMAScript language value,
+            optional _waitable_: a Boolean,
           ): either a normal completion containing an integer or a throw completion
         </h1>
         <dl class="header">
         </dl>
         <emu-alg>
-          1. Let _iieoRecord_ be ? ValidateIntegerTypedArray(_typedArray_).
+          1. If _waitable_ is not present, set _waitable_ to *false*.
+          1. Let _iieoRecord_ be ? ValidateIntegerTypedArray(_typedArray_, _waitable_).
           1. Return ? ValidateAtomicAccess(_iieoRecord_, _requestIndex_).
         </emu-alg>
       </emu-clause>
@@ -44663,7 +44680,7 @@ THH:mm:ss.sss
       <p>This function notifies some agents that are sleeping in the wait queue.</p>
       <p>It performs the following steps when called:</p>
       <emu-alg>
-        1. Let _indexedPosition_ be ? ValidateAtomicAccessOnIntegerTypedArray(_typedArray_, _index_).
+        1. Let _indexedPosition_ be ? ValidateAtomicAccessOnIntegerTypedArray(_typedArray_, _index_, *true*).
         1. If _count_ is *undefined*, then
           1. Let _c_ be +∞.
         1. Else,
