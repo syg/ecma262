@@ -14743,7 +14743,7 @@
           1. Assert: IsFixedLengthArrayBuffer(_O_.[[ViewedArrayBuffer]]) is *false*.
           1. Let _byteOffset_ be _O_.[[ByteOffset]].
           1. Let _elementSize_ be TypedArrayElementSize(_O_).
-          1. Let _byteLength_ be _iieoRecord_.[[CachedBufferByteLength]]
+          1. Let _byteLength_ be _iieoRecord_.[[CachedBufferByteLength]].
           1. Assert: _byteLength_ is not ~detached~.
           1. Return floor((_byteLength_ - _byteOffset_) / _elementSize_).
         </emu-alg>
@@ -14762,9 +14762,8 @@
         <emu-alg>
           1. Let _O_ be _iieoRecord_.[[Object]].
           1. Let _bufferByteLength_ be _iieoRecord_.[[CachedBufferByteLength]].
-          1. Let _buffer_ be _O_.[[ViewedArrayBuffer]].
           1. Assert: IsDetachedBuffer(buffer_) is *true* if and only if _bufferByteLength_ is ~detached~.
-          1. If _bufferByteLength_ is ~detached~, then return *true*.
+          1. If _bufferByteLength_ is ~detached~, return *true*.
           1. Let _byteOffsetStart_ be _O_.[[ByteOffset]].
           1. If _O_.[[ArrayLength]] is ~auto~, then
             1. Let _byteOffsetEnd_ be _bufferByteLength_.
@@ -14842,6 +14841,25 @@
         <emu-note>
           <p>This operation always appears to succeed, but it has no effect when attempting to write past the end of a TypedArray or to a TypedArray which is backed by a detached ArrayBuffer.</p>
         </emu-note>
+      </emu-clause>
+
+      <emu-clause id="sec-isarraybufferviewoutofbounds" type="abstract operation">
+        <h1>
+          IsArrayBufferViewOutOfBounds(
+            _O_: an Integer-Indexed exotic object or a DataView,
+          ): a Boolean
+        </h1>
+        <dl class="header">
+          <dt>description</dt>
+          <dd>It checks if either any of a TypedArray's numeric properties or a DataView object's methods can reference a value at an index not contained within the underlying data block's bounds. This abstract operation exists as a convenience for upstream specifications.</dd>
+        </dl>
+        <emu-alg>
+          1. If _O_ has a [[DataView]] internal slot, then
+            1. Let _viewRecord_ be MakeDataViewWithBufferWitnessRecord(_O_, ~SeqCst~).
+            1. Return IsViewOutOfBounds(_viewRecord_).
+          1. Let _iieoRecord_ be MakeIntegerIndexedObjectWithBufferWitnessRecord(_O_, ~SeqCst).
+          1. Return IsIntegerIndexedObjectOutOfBounds(_iieoRecord_).
+        </emu-alg>
       </emu-clause>
     </emu-clause>
 
@@ -43517,7 +43535,7 @@ THH:mm:ss.sss
           1. Let _bufferByteLength_ be _viewRecord.[[CachedBufferByteLength]].
           1. Let _buffer_ be _view_.[[ViewedArrayBuffer]].
           1. Assert: IsDetachedBuffer(_buffer_) is *true* if and only if _buffer_ is ~detached~.
-          1. If _buffer_ is ~detached~, then return *true*.
+          1. If _buffer_ is ~detached~, return *true*.
           1. Let _byteOffsetStart_ be _view_.[[ByteOffset]].
           1. If _view_.[[ByteLength]] is ~auto~, then
             1. Let _byteOffsetEnd_ be _bufferByteLength_.
