@@ -42853,6 +42853,7 @@ THH:mm:ss.sss
           1. Let _block_ be _arrayBuffer_.[[ArrayBufferData]].
           1. Let _elementSize_ be the Element Size value specified in <emu-xref href="#table-the-typedarray-constructors"></emu-xref> for Element Type _type_.
           1. If IsSharedArrayBuffer(_arrayBuffer_) is *true*, then
+            1. Assert: _block_ is a Shared Data Block.
             1. Let _rawValue_ be GetRawBytesFromSharedBlock(_block_, _byteIndex_, _type_, _isTypedArray_, _order_).
           1. Else,
             1. Let _rawValue_ be a List whose elements are bytes from _block_ at indices in the interval from _byteIndex_ (inclusive) to _byteIndex_ + _elementSize_ (exclusive).
