@@ -14762,7 +14762,7 @@
         <emu-alg>
           1. Let _O_ be _iieoRecord_.[[Object]].
           1. Let _bufferByteLength_ be _iieoRecord_.[[CachedBufferByteLength]].
-          1. Assert: IsDetachedBuffer(_iieoRecord_.[[ViewedArrayBuffer]]) is *true* if and only if _bufferByteLength_ is ~detached~.
+          1. Assert: IsDetachedBuffer(_O_.[[ViewedArrayBuffer]]) is *true* if and only if _bufferByteLength_ is ~detached~.
           1. If _bufferByteLength_ is ~detached~, return *true*.
           1. Let _byteOffsetStart_ be _O_.[[ByteOffset]].
           1. If _O_.[[ArrayLength]] is ~auto~, then
