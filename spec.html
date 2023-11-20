@@ -10933,7 +10933,7 @@
             1. Return _envRec_.[[GlobalThisValue]].
           </emu-alg>
         </emu-clause>
-has
+
         <emu-clause id="sec-haslexicaldeclaration" type="concrete method">
           <h1>
             HasLexicalDeclaration (
@@ -25907,7 +25907,7 @@ has
         1. For each element _name_ of _lexNames_, do
           1. If _env_.HasLexicalDeclaration(_name_) is *true*, throw a *SyntaxError* exception.
           1. Let _hasRestrictedGlobal_ be ? _env_.HasRestrictedGlobalProperty(_name_).
-          1. NOTE: `var` bindings that are not introduced by non-strict direct eval are non-configurable and are considered restricted global properties.
+          1. NOTE: Global `var` and `function` bindings (except those that are introduced by non-strict direct eval) are non-configurable and are therefore restricted global properties.
           1. If _hasRestrictedGlobal_ is *true*, throw a *SyntaxError* exception.
         1. For each element _name_ of _varNames_, do
           1. If _env_.HasLexicalDeclaration(_name_) is *true*, throw a *SyntaxError* exception.
