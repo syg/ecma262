@@ -14627,8 +14627,8 @@
           <dd>a TypedArray _O_</dd>
         </dl>
         <emu-alg>
-          1. NOTE: The extensibility-related invariants specified in <emu-xref href="#sec-invariants-of-the-essential-internal-methods"></emu-xref> do not allow this method to return *true* when _O_ can gain (or lose and then regain) integer index properties, which might occur with resizing of its underlying buffer.
-          1. If IsFixedLengthTypedArray(_O_) is *false*, return *false*.
+          1. NOTE: The extensibility-related invariants specified in <emu-xref href="#sec-invariants-of-the-essential-internal-methods"></emu-xref> do not allow this method to return *true* when _O_ can gain (or lose and then regain) properties, which might occur for properties with integer index names when its underlying buffer is resized.
+          1. If IsTypedArrayFixedLength(_O_) is *false*, return *false*.
           1. Return OrdinaryPreventExtensions(_O_).
         </emu-alg>
       </emu-clause>
@@ -14936,6 +14936,22 @@
           1. If _byteOffsetStart_ > _bufferByteLength_ or _byteOffsetEnd_ > _bufferByteLength_, return *true*.
           1. NOTE: 0-length TypedArrays are not considered out-of-bounds.
           1. Return *false*.
+        </emu-alg>
+      </emu-clause>
+
+      <emu-clause id="sec-istypedarrayfixedlength" type="abstract operation">
+        <h1>
+          IsTypedArrayFixedLength (
+            _O_: a TypedArray,
+          ): a Boolean
+        </h1>
+        <dl class="header">
+        </dl>
+        <emu-alg>
+          1. If _O_.[[ArrayLength]] is ~auto~, return *false*.
+          1. Let _buffer_ be _O_.[[ViewedArrayBuffer]].
+          1. If IsFixedLengthArrayBuffer(_buffer_) is *false* and IsSharedArrayBuffer(_buffer_) is *false*, return *false*.
+          1. Return *true*.
         </emu-alg>
       </emu-clause>
 
@@ -41842,22 +41858,6 @@ THH:mm:ss.sss
             1. Set _O_.[[ByteOffset]] to 0.
             1. Set _O_.[[ArrayLength]] to _length_.
             1. Return ~unused~.
-          </emu-alg>
-        </emu-clause>
-
-        <emu-clause id="sec-isfixedlengthtypedarray" type="abstract operation">
-          <h1>
-            IsFixedLengthTypedArray (
-              _O_: a TypedArray,
-            ): a Boolean
-          </h1>
-          <dl class="header">
-          </dl>
-          <emu-alg>
-            1. If _O_.[[ArrayLength]] is ~auto~, return *false*.
-            1. Let _buffer_ be _O_.[[ViewedArrayBuffer]].
-            1. If IsFixedLengthArrayBuffer(_buffer_) is *false* and IsSharedArrayBuffer(_buffer_) is *false*, return *false*.
-            1. Return *true*.
           </emu-alg>
         </emu-clause>
       </emu-clause>
