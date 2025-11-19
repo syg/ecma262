@@ -12338,7 +12338,24 @@
     <emu-clause id="sec-liveness">
       <h1>Liveness</h1>
 
-      <p>For some set of objects and/or symbols _S_ a <dfn>hypothetical WeakRef-oblivious</dfn> execution with respect to _S_ is an execution whereby the abstract operation WeakRefDeref of a WeakRef whose referent is an element of _S_ always returns *undefined*.</p>
+      <p>For some set of objects and/or symbols _S_ a <dfn>hypothetical WeakRef-oblivious</dfn> execution with respect to _S_ is an execution whereby the abstract operation WeakRefDeref is replaced by the following:</p>
+
+      <emu-clause id="sec-weakrefderefhypothetical" type="abstract operation">
+        <h1>
+          WeakRefDerefHypothetical (
+            _weakRef_: a WeakRef,
+          ): an ECMAScript language value
+        </h1>
+        <dl class="header">
+        </dl>
+        <emu-alg>
+          1. Let _target_ be _weakRef_.[[WeakRefTarget]].
+          1. [declared="S"] If _target_ is not in _S_ and is not ~empty~, then
+            1. Perform AddToKeptObjects(_weakRef_).
+            1. Return _target_.
+          1. Return *undefined*.
+        </emu-alg>
+      </emu-clause>
 
       <emu-note>
         WeakRef-obliviousness, together with liveness, capture two notions. One, that a WeakRef itself does not keep its referent alive. Two, that cycles in liveness does not imply that a value is live. To be concrete, if determining _v_'s liveness depends on determining the liveness of a WeakRef referent, _r_, _r_'s liveness cannot assume _v_'s liveness, which would be circular reasoning.
@@ -12350,18 +12367,10 @@
         Colloquially, we say that an individual object or symbol is live if every set containing it is live.
       </emu-note>
 
-      <p>At any point during evaluation, a set of objects and/or symbols _S_ is considered <dfn>live</dfn> if either of the following conditions is met:</p>
+      <p>At any point during evaluation, a set of objects and/or symbols _S_ is considered <dfn>live</dfn> if there exists a valid future hypothetical WeakRef-oblivious execution with respect to _S_ that observes the identity of any value in _S_.</p>
 
-      <ul>
-        <li>
-          Any element in _S_ is included in any agent's [[KeptAlive]] List.
-        </li>
-        <li>
-          There exists a valid future hypothetical WeakRef-oblivious execution with respect to _S_ that observes the identity of any value in _S_.
-        </li>
-      </ul>
       <emu-note>
-        The second condition above intends to capture the intuition that a value is live if its identity is observable via non-WeakRef means. A value's identity may be observed by observing a strict equality comparison or observing the value being used as key in a Map.
+        The above intends to capture the intuition that a value is live if its identity is observable via non-WeakRef means. A value's identity may be observed by observing a strict equality comparison or observing the value being used as key in a Map.
       </emu-note>
       <emu-note>
         <p>Presence of an object or a symbol in a field, an internal slot, or a property does not imply that the value is live. For example if the value in question is never passed back to the program, then it cannot be observed.</p>
@@ -12381,8 +12390,9 @@
       <p>At any time, if a set of objects and/or symbols _S_ is not live, an ECMAScript implementation may perform the following steps atomically:</p>
 
       <emu-alg>
+        1. Let _agentRecord_ be the surrounding agent's Agent Record.
         1. For each element _value_ of _S_, do
-          1. For each WeakRef _ref_ such that _ref_.[[WeakRefTarget]] is _value_, do
+          1. For each WeakRef _ref_ such that _ref_.[[WeakRefTarget]] is _value_ and _ref_ is not in _agentRecord_.[[KeptAlive]], do
             1. Set _ref_.[[WeakRefTarget]] to ~empty~.
           1. For each FinalizationRegistry _fg_ such that _fg_.[[Cells]] contains a Record _cell_ such that _cell_.[[WeakRefTarget]] is _value_, do
             1. Set _cell_.[[WeakRefTarget]] to ~empty~.
@@ -12447,18 +12457,18 @@
   <emu-clause id="sec-addtokeptobjects" type="abstract operation">
     <h1>
       AddToKeptObjects (
-        _value_: an Object or a Symbol,
+        _weakRef_: a WeakRef,
       ): ~unused~
     </h1>
     <dl class="header">
     </dl>
     <emu-alg>
       1. Let _agentRecord_ be the surrounding agent's Agent Record.
-      1. Append _value_ to _agentRecord_.[[KeptAlive]].
+      1. Append _weakRef_ to _agentRecord_.[[KeptAlive]].
       1. Return ~unused~.
     </emu-alg>
     <emu-note>
-      When the abstract operation AddToKeptObjects is called with a target object or symbol, it adds the target to a list that will point strongly at the target until ClearKeptObjects is called.
+      When the abstract operation AddToKeptObjects is called with a target WeakRef, it makes that WeakRef strong until ClearKeptObjects is called.
     </emu-note>
   </emu-clause>
 
@@ -47514,7 +47524,7 @@ THH:mm:ss.sss
           1. If NewTarget is *undefined*, throw a *TypeError* exception.
           1. If CanBeHeldWeakly(_target_) is *false*, throw a *TypeError* exception.
           1. Let _weakRef_ be ? OrdinaryCreateFromConstructor(NewTarget, *"%WeakRef.prototype%"*, « [[WeakRefTarget]] »).
-          1. Perform AddToKeptObjects(_target_).
+          1. Perform AddToKeptObjects(_weakRef_).
           1. Set _weakRef_.[[WeakRefTarget]] to _target_.
           1. Return _weakRef_.
         </emu-alg>
@@ -47604,7 +47614,7 @@ THH:mm:ss.sss
         <emu-alg>
           1. Let _target_ be _weakRef_.[[WeakRefTarget]].
           1. If _target_ is not ~empty~, then
-            1. Perform AddToKeptObjects(_target_).
+            1. Perform AddToKeptObjects(_weakRef_).
             1. Return _target_.
           1. Return *undefined*.
         </emu-alg>
